@@ -31,7 +31,6 @@ function(add_daemon_target TARGET_NAME)
     cert
     delayed_shutdown
     fmt
-    iso
     logger
     metrics
     petname
