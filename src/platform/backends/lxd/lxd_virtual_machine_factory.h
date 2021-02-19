@@ -51,6 +51,12 @@ public:
     VMImageVault::UPtr create_image_vault(std::vector<VMImageHost*> image_hosts, URLDownloader* downloader,
                                           const Path& cache_dir_path, const Path& data_dir_path,
                                           const days& days_to_expire) override;
+    QString make_cloud_init_image(const std::string& name, const QDir& instance_dir, const YAML::Node& meta_data_config,
+                                  const YAML::Node& user_data_config, const YAML::Node& vendor_data_config,
+                                  const YAML::Node& network_data_config) override
+    {
+        return {};
+    };
 
     std::vector<NetworkInterfaceInfo> networks() const override;
 
