@@ -25,6 +25,7 @@
 #include "temp_dir.h"
 
 #include <gmock/gmock.h>
+#include <gtest/gtest.h>
 
 namespace mp = multipass;
 namespace mpl = multipass::logging;
@@ -85,4 +86,23 @@ TEST_F(BaseFactory, networks_throws)
     MockBaseFactory factory;
 
     ASSERT_THROW(factory.networks(), mp::NotImplementedOnThisBackendException);
+}
+
+// Ideally, we'd define some unique YAML for each node and test the contents of the ISO image,
+// but we'd need a cross-platfrom library to read files in an ISO image and that is beyond scope
+// at this time.  Instead, just make sure an ISO image is created and has the expected path.
+TEST_F(BaseFactory, creates_cloud_init_iso_image)
+{
+    mpt::TempDir iso_dir;
+    const std::string name{"foo"};
+    const YAML::Node metadata{YAML::Load({fmt::format("name: {}", name)})}, vendor_data{metadata}, user_data{metadata},
+        network_data{metadata};
+
+    MockBaseFactory factory;
+
+    auto iso_image_path =
+        factory.make_cloud_init_image(name, iso_dir.path(), metadata, user_data, vendor_data, network_data);
+
+    EXPECT_EQ(iso_image_path, QString("%1/cloud-init-config.iso").arg(iso_dir.path()));
+    EXPECT_TRUE(QFile::exists(iso_image_path));
 }
